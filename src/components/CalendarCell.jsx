@@ -1,20 +1,7 @@
-// src/components/CalendarCell.jsx
 import { occupancyToColor } from '../utils/occupancyUtils'
 
-// Cells with these colors are dark — badge needs light styling
 const DARK_COLORS = new Set(['#fb923c', '#ef4444', '#991b1b'])
 
-/**
- * A single day cell in the calendar grid.
- *
- * Props:
- *   cell          { dateStr, day, isCurrentMonth }
- *   occupancy     number — how many rooms occupied this night (0–10)
- *   isSelected    boolean — is this cell inside the current drag selection
- *   onMouseDown   fn(dateStr)
- *   onMouseEnter  fn(dateStr)
- *   onMouseUp     fn(dateStr)
- */
 export default function CalendarCell({
   cell,
   occupancy = 0,
@@ -22,9 +9,11 @@ export default function CalendarCell({
   onMouseDown,
   onMouseEnter,
   onMouseUp,
+  onMouseMove,
+  onMouseLeave,
 }) {
-  const bgColor  = isSelected ? undefined : occupancyToColor(occupancy)
-  const isDark   = DARK_COLORS.has(bgColor)
+  const bgColor = isSelected ? undefined : occupancyToColor(occupancy)
+  const isDark  = DARK_COLORS.has(bgColor)
 
   const classes = [
     'calendar-cell',
@@ -42,6 +31,8 @@ export default function CalendarCell({
       onMouseDown={() => onMouseDown?.(cell.dateStr)}
       onMouseEnter={() => onMouseEnter?.(cell.dateStr)}
       onMouseUp={() => onMouseUp?.(cell.dateStr)}
+      onMouseMove={e => onMouseMove?.(cell.dateStr, e.clientX, e.clientY)}
+      onMouseLeave={() => onMouseLeave?.()}
     >
       <span className="day-number">{cell.day}</span>
       {occupancy > 0 && cell.isCurrentMonth && (

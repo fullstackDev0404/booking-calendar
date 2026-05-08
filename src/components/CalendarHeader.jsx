@@ -1,9 +1,5 @@
-// src/components/CalendarHeader.jsx
+import { WEEKDAYS } from '../constants'
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-// Renders the 7 weekday label cells at the top of the calendar grid.
-// Purely presentational — no logic, no state.
 export default function CalendarHeader() {
   return (
     <>

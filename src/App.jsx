@@ -1,36 +1,25 @@
-// src/App.jsx
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useBookings } from './hooks/useBookings'
+import { useCalendar } from './hooks/useCalendar'
 import { buildOccupancyMap } from './utils/occupancyUtils'
-import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange } from './utils/dateUtils'
+import { computeMonthStats } from './utils/statsUtils'
+import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate } from './utils/dateUtils'
+import { MONTH_NAMES, OCCUPANCY_LEGEND } from './constants'
 import CalendarGrid from './components/CalendarGrid'
 import BookingPanel from './components/BookingPanel'
-
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
-
-const LEGEND = [
-  { color: '#f8fafc', label: '0' },
-  { color: '#fef9c3', label: '1–3' },
-  { color: '#fde68a', label: '4–5' },
-  { color: '#fb923c', label: '6–7' },
-  { color: '#ef4444', label: '8–9' },
-  { color: '#991b1b', label: '10' },
-]
+import StatsStrip from './components/StatsStrip'
+import DayTooltip from './components/DayTooltip'
 
 export default function App() {
   const { bookings, loading, error } = useBookings()
 
-  const today = new Date()
-  const [year, setYear]   = useState(today.getFullYear())
-  const [month, setMonth] = useState(today.getMonth())
+  const {
+    year, month, selection, isDragging, tooltip,
+    goToPrevMonth, goToNextMonth, goToToday,
+    handleDayMouseDown, handleDayMouseEnter, handleDayMouseUp,
+    handleDayMouseMove, handleDayMouseLeave,
+  } = useCalendar()
 
-  const [selection, setSelection]   = useState(null)
-  const [isDragging, setIsDragging] = useState(false)
-
-  // Occupancy map — recomputes only when bookings or month changes
   const occupancyMap = useMemo(() => {
     if (!bookings.length) return {}
     const m       = String(month + 1).padStart(2, '0')
@@ -38,7 +27,11 @@ export default function App() {
     return buildOccupancyMap(bookings, `${year}-${m}-01`, `${year}-${m}-${lastDay}`)
   }, [bookings, year, month])
 
-  // Filtered bookings for the selected range — recomputes only when selection or bookings change
+  const monthStats = useMemo(() => {
+    if (!bookings.length) return null
+    return computeMonthStats(bookings, year, month)
+  }, [bookings, year, month])
+
   const selectedBookings = useMemo(() => {
     if (!selection) return []
     const start = minDate(selection.start, selection.end)
@@ -46,39 +39,12 @@ export default function App() {
     return bookings.filter(b => bookingOverlapsRange(b, start, end))
   }, [bookings, selection])
 
-  // --- Month navigation ---
-  function goToPrevMonth() {
-    if (month === 0) { setYear(y => y - 1); setMonth(11) }
-    else setMonth(m => m - 1)
-  }
+  const hoveredDateStr  = tooltip?.dateStr ?? null
+  const tooltipBookings = useMemo(() => {
+    if (!hoveredDateStr) return []
+    return bookings.filter(b => bookingOccupiesDate(b, hoveredDateStr))
+  }, [bookings, hoveredDateStr])
 
-  function goToNextMonth() {
-    if (month === 11) { setYear(y => y + 1); setMonth(0) }
-    else setMonth(m => m + 1)
-  }
-
-  function goToToday() {
-    setYear(today.getFullYear())
-    setMonth(today.getMonth())
-  }
-
-  // --- Drag selection ---
-  function handleDayMouseDown(dateStr) {
-    setIsDragging(true)
-    setSelection({ start: dateStr, end: dateStr })
-  }
-
-  function handleDayMouseEnter(dateStr) {
-    if (!isDragging) return
-    setSelection(prev => ({ ...prev, end: dateStr }))
-  }
-
-  function handleDayMouseUp(dateStr) {
-    setIsDragging(false)
-    setSelection(prev => ({ ...prev, end: dateStr }))
-  }
-
-  // --- Render states ---
   if (loading) {
     return (
       <>
@@ -108,7 +74,8 @@ export default function App() {
       <div className="app">
         <div className="calendar-section">
 
-          {/* Navigation */}
+          <StatsStrip stats={monthStats} />
+
           <div className="calendar-nav">
             <button className="calendar-nav-arrow" onClick={goToPrevMonth}>←</button>
             <h2 className="calendar-title">{MONTH_NAMES[month]} {year}</h2>
@@ -116,7 +83,6 @@ export default function App() {
             <button className="calendar-nav-today" onClick={goToToday}>Today</button>
           </div>
 
-          {/* Calendar grid */}
           <CalendarGrid
             year={year}
             month={month}
@@ -125,12 +91,13 @@ export default function App() {
             onDayMouseDown={handleDayMouseDown}
             onDayMouseEnter={handleDayMouseEnter}
             onDayMouseUp={handleDayMouseUp}
+            onDayMouseMove={handleDayMouseMove}
+            onDayMouseLeave={handleDayMouseLeave}
           />
 
-          {/* Heatmap legend */}
           <div className="calendar-legend">
             <span className="legend-label">Occupancy:</span>
-            {LEGEND.map(({ color, label }) => (
+            {OCCUPANCY_LEGEND.map(({ color, label }) => (
               <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span className="legend-swatch" style={{ background: color }} />
                 <span>{label}</span>
@@ -139,14 +106,20 @@ export default function App() {
             <span style={{ marginLeft: 4 }}>rooms</span>
           </div>
 
-          {/* Booking detail panel */}
-          <BookingPanel
-            bookings={selectedBookings}
-            selection={selection}
-          />
+          <BookingPanel bookings={selectedBookings} selection={selection} />
 
         </div>
       </div>
+
+      {tooltip && !isDragging && (
+        <DayTooltip
+          dateStr={tooltip.dateStr}
+          occupancy={occupancyMap[tooltip.dateStr] ?? 0}
+          bookings={tooltipBookings}
+          x={tooltip.x}
+          y={tooltip.y}
+        />
+      )}
     </>
   )
 }
