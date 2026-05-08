@@ -245,6 +245,19 @@ body {
   margin-bottom: auto;
 }
 
+/* Today's date — navy circle around the number */
+.day-number--today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 12px;
+}
+
 .calendar-cell--outside .day-number {
   color: var(--text-muted);
 }

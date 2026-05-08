@@ -1,10 +1,11 @@
-import { buildCalendarCells, minDate, maxDate } from '../utils/dateUtils'
+import { buildCalendarCells, minDate, maxDate, formatDate } from '../utils/dateUtils'
 import CalendarHeader from './CalendarHeader'
 import CalendarCell from './CalendarCell'
 
 export default function CalendarGrid({
   year,
   month,
+  todayStr,
   occupancyMap = {},
   selection = null,
   onDayMouseDown,
@@ -26,6 +27,7 @@ export default function CalendarGrid({
           key={cell.dateStr}
           cell={cell}
           occupancy={occupancyMap[cell.dateStr] ?? 0}
+          isToday={cell.dateStr === todayStr}
           isSelected={
             selStart !== null &&
             cell.dateStr >= selStart &&

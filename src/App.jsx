@@ -3,7 +3,7 @@ import { useBookings } from './hooks/useBookings'
 import { useCalendar } from './hooks/useCalendar'
 import { buildOccupancyMap } from './utils/occupancyUtils'
 import { computeMonthStats } from './utils/statsUtils'
-import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate } from './utils/dateUtils'
+import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate, formatDate } from './utils/dateUtils'
 import { MONTH_NAMES, OCCUPANCY_LEGEND } from './constants'
 import CalendarGrid from './components/CalendarGrid'
 import BookingPanel from './components/BookingPanel'
@@ -12,6 +12,9 @@ import DayTooltip from './components/DayTooltip'
 
 export default function App() {
   const { bookings, loading, error } = useBookings()
+
+  const today    = new Date()
+  const todayStr = formatDate(today)
 
   const {
     year, month, selection, isDragging, tooltip,
@@ -86,6 +89,7 @@ export default function App() {
           <CalendarGrid
             year={year}
             month={month}
+            todayStr={todayStr}
             occupancyMap={occupancyMap}
             selection={selection}
             onDayMouseDown={handleDayMouseDown}

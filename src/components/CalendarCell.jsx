@@ -6,6 +6,7 @@ export default function CalendarCell({
   cell,
   occupancy = 0,
   isSelected = false,
+  isToday = false,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
@@ -34,7 +35,9 @@ export default function CalendarCell({
       onMouseMove={e => onMouseMove?.(cell.dateStr, e.clientX, e.clientY)}
       onMouseLeave={() => onMouseLeave?.()}
     >
-      <span className="day-number">{cell.day}</span>
+      <span className={isToday ? 'day-number day-number--today' : 'day-number'}>
+        {cell.day}
+      </span>
       {occupancy > 0 && cell.isCurrentMonth && (
         <span className="occupancy-count">{occupancy}/10</span>
       )}
