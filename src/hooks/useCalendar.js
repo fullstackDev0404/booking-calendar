@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export function useCalendar() {
   const today = new Date()
 
-  const [year, setYear]     = useState(today.getFullYear())
-  const [month, setMonth]   = useState(today.getMonth())
+  const [year, setYear]             = useState(today.getFullYear())
+  const [month, setMonth]           = useState(today.getMonth())
   const [selection, setSelection]   = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [tooltip, setTooltip]       = useState(null)
+
+  // If the user releases the mouse outside the grid, end the drag cleanly.
+  // Without this, isDragging stays true and the next hover continues the selection.
+  useEffect(() => {
+    function onWindowMouseUp() {
+      setIsDragging(false)
+    }
+    window.addEventListener('mouseup', onWindowMouseUp)
+    return () => window.removeEventListener('mouseup', onWindowMouseUp)
+  }, [])
 
   function goToPrevMonth() {
     if (month === 0) { setYear(y => y - 1); setMonth(11) }
