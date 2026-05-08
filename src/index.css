@@ -1,238 +1,430 @@
+/* ── Design tokens ───────────────────────────────────────── */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Brand palette — deep navy + warm gold, classic hospitality */
+  --navy:        #0f1f3d;
+  --navy-light:  #1a3260;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c97a;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Neutrals */
+  --bg:          #f7f6f3;       /* warm off-white, not clinical */
+  --surface:     #ffffff;
+  --surface-2:   #f0ede8;
+  --border:      #e2ddd6;
+  --border-dark: #c8c2b8;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
+  /* Text */
+  --text-primary:   #1a1714;
+  --text-secondary: #6b6560;
+  --text-muted:     #9e9890;
+
+  /* Selection */
+  --select-bg:     rgba(201, 168, 76, 0.15);
+  --select-border: rgba(201, 168, 76, 0.6);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 31, 61, 0.08), 0 1px 2px rgba(15, 31, 61, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 31, 61, 0.10), 0 2px 4px rgba(15, 31, 61, 0.06);
+
+  /* Typography */
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
   background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+/* ── Reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
+  background: var(--bg);
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  min-height: 100vh;
+}
+
+/* ── App shell ───────────────────────────────────────────── */
+.app {
+  max-width: 1100px;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  padding: 0 0 48px;
+  user-select: none;
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.app-topbar {
+  background: var(--navy);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  margin-bottom: 28px;
+}
+
+.app-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.app-topbar-brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.app-topbar-sub {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ── Status screens ──────────────────────────────────────── */
+.app-status {
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 12px;
+  color: var(--text-secondary);
   font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-/* ── App layout ─────────────────────────────────────────── */
-.app {
-  padding: 24px;
-  user-select: none; /* prevents text selection during drag */
-}
-
-.app-status {
-  padding: 48px;
-  text-align: center;
-  color: var(--text);
-  font-size: 16px;
 }
 
 .app-status--error {
-  color: #ef4444;
+  color: #c0392b;
 }
 
-/* ── Calendar navigation ─────────────────────────────────── */
+.app-status-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--navy);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Calendar section ────────────────────────────────────── */
+.calendar-section {
+  padding: 0 32px;
+}
+
+/* ── Navigation bar ──────────────────────────────────────── */
 .calendar-nav {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
-.calendar-nav button {
-  padding: 6px 14px;
+.calendar-nav-arrow {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--bg);
-  color: var(--text-h);
+  background: var(--surface);
+  color: var(--text-primary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.calendar-nav button:hover {
-  background: var(--accent-bg);
-  border-color: var(--accent-border);
+.calendar-nav-arrow:hover {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
 }
 
 .calendar-title {
-  margin: 0;
-  min-width: 200px;
+  margin: 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  min-width: 210px;
   text-align: center;
 }
 
-.today-btn {
-  margin-left: 8px;
+.calendar-nav-today {
+  margin-left: 4px;
+  padding: 6px 16px;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.calendar-nav-today:hover {
+  background: var(--gold);
+  color: #fff;
 }
 
 /* ── Calendar grid ───────────────────────────────────────── */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-/* ── Header cells (Sun–Sat) ──────────────────────────────── */
+/* ── Weekday header ──────────────────────────────────────── */
 .calendar-header-cell {
-  background: var(--code-bg);
-  padding: 8px 0;
+  background: var(--navy);
+  padding: 10px 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1.2px;
   text-transform: uppercase;
 }
 
 /* ── Day cells ───────────────────────────────────────────── */
 .calendar-cell {
-  background: var(--bg);
-  min-height: 72px;
-  padding: 6px 8px;
+  background: var(--surface);
+  min-height: 80px;
+  padding: 8px 10px;
   cursor: pointer;
   position: relative;
-  transition: filter 0.1s;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  transition: filter 0.12s;
 }
 
 .calendar-cell:hover {
-  filter: brightness(0.95);
+  filter: brightness(0.94);
 }
 
-/* Days from previous/next month — dimmed */
 .calendar-cell--outside {
-  opacity: 0.35;
+  background: var(--surface-2);
+  opacity: 0.5;
 }
 
-/* Selected range highlight */
 .calendar-cell--selected {
-  background: var(--accent-bg) !important;
-  outline: 2px solid var(--accent-border);
-  outline-offset: -2px;
+  background: var(--select-bg) !important;
+  box-shadow: inset 0 0 0 2px var(--gold);
 }
 
+/* ── Cell content ────────────────────────────────────────── */
 .day-number {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--text-h);
+  font-weight: 600;
+  color: var(--text-primary);
   line-height: 1;
+  margin-bottom: auto;
+}
+
+.calendar-cell--outside .day-number {
+  color: var(--text-muted);
 }
 
 .occupancy-count {
-  font-size: 11px;
-  color: var(--text);
-  margin-top: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 3px;
+  padding: 1px 5px;
+  align-self: flex-start;
+  margin-top: 6px;
+  letter-spacing: 0.2px;
 }
 
-/* ── Selection info strip ────────────────────────────────── */
+/* Dark cells (orange/red) — flip badge to white */
+.calendar-cell--dark .day-number {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.calendar-cell--dark .occupancy-count {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ── Legend ──────────────────────────────────────────────── */
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legend-label {
+  margin-right: 4px;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ── Selection info / detail panel placeholder ───────────── */
 .selection-info {
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
-  border-radius: 6px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Booking panel ───────────────────────────────────────── */
+.booking-panel {
+  margin-top: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.booking-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--navy);
+  border-bottom: 1px solid var(--border);
+}
+
+.booking-panel-title {
   font-size: 14px;
-  color: var(--text-h);
-  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.1px;
+}
+
+.booking-panel-count {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.1);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+.booking-panel-empty {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.booking-panel-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Booking card ────────────────────────────────────────── */
+.booking-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+
+.booking-card:last-child {
+  border-bottom: none;
+}
+
+.booking-card:hover {
+  background: var(--surface-2);
+}
+
+.booking-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.booking-card-guest {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-card-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.booking-card-dot {
+  color: var(--border-dark);
+}
+
+.booking-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.booking-card-arrow {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.booking-card-nights {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 4px;
+}
+
+.booking-card-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
 }

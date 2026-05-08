@@ -2,34 +2,49 @@
 import { useState, useMemo } from 'react'
 import { useBookings } from './hooks/useBookings'
 import { buildOccupancyMap } from './utils/occupancyUtils'
-import { getDaysInMonth } from './utils/dateUtils'
+import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange } from './utils/dateUtils'
 import CalendarGrid from './components/CalendarGrid'
+import BookingPanel from './components/BookingPanel'
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
+const LEGEND = [
+  { color: '#f8fafc', label: '0' },
+  { color: '#fef9c3', label: '1–3' },
+  { color: '#fde68a', label: '4–5' },
+  { color: '#fb923c', label: '6–7' },
+  { color: '#ef4444', label: '8–9' },
+  { color: '#991b1b', label: '10' },
+]
+
 export default function App() {
   const { bookings, loading, error } = useBookings()
 
-  // Current viewed month — defaults to today
   const today = new Date()
   const [year, setYear]   = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
 
-  // Drag selection state: { start, end } both "YYYY-MM-DD", or null
-  const [selection, setSelection] = useState(null)
+  const [selection, setSelection]   = useState(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  // Build occupancy map only when bookings or viewed month changes
+  // Occupancy map — recomputes only when bookings or month changes
   const occupancyMap = useMemo(() => {
     if (!bookings.length) return {}
-    const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`
-    const lastDay   = getDaysInMonth(year, month)
-    const endDate   = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
-    return buildOccupancyMap(bookings, startDate, endDate)
+    const m       = String(month + 1).padStart(2, '0')
+    const lastDay = String(getDaysInMonth(year, month)).padStart(2, '0')
+    return buildOccupancyMap(bookings, `${year}-${m}-01`, `${year}-${m}-${lastDay}`)
   }, [bookings, year, month])
+
+  // Filtered bookings for the selected range — recomputes only when selection or bookings change
+  const selectedBookings = useMemo(() => {
+    if (!selection) return []
+    const start = minDate(selection.start, selection.end)
+    const end   = maxDate(selection.start, selection.end)
+    return bookings.filter(b => bookingOverlapsRange(b, start, end))
+  }, [bookings, selection])
 
   // --- Month navigation ---
   function goToPrevMonth() {
@@ -47,7 +62,7 @@ export default function App() {
     setMonth(today.getMonth())
   }
 
-  // --- Drag selection handlers ---
+  // --- Drag selection ---
   function handleDayMouseDown(dateStr) {
     setIsDragging(true)
     setSelection({ start: dateStr, end: dateStr })
@@ -64,36 +79,86 @@ export default function App() {
   }
 
   // --- Render states ---
-  if (loading) return <div className="app-status">Loading bookings...</div>
-  if (error)   return <div className="app-status app-status--error">Error: {error}</div>
+  if (loading) {
+    return (
+      <>
+        <TopBar />
+        <div className="app-status">
+          <div className="app-status-spinner" />
+          Loading bookings…
+        </div>
+      </>
+    )
+  }
+
+  if (error) {
+    return (
+      <>
+        <TopBar />
+        <div className="app-status app-status--error">
+          Failed to load data: {error}
+        </div>
+      </>
+    )
+  }
 
   return (
-    <div className="app">
-      {/* Calendar header: navigation controls */}
-      <div className="calendar-nav">
-        <button onClick={goToPrevMonth}>←</button>
-        <h2 className="calendar-title">{MONTH_NAMES[month]} {year}</h2>
-        <button onClick={goToNextMonth}>→</button>
-        <button onClick={goToToday} className="today-btn">Today</button>
-      </div>
+    <>
+      <TopBar />
+      <div className="app">
+        <div className="calendar-section">
 
-      {/* Calendar grid */}
-      <CalendarGrid
-        year={year}
-        month={month}
-        occupancyMap={occupancyMap}
-        selection={selection}
-        onDayMouseDown={handleDayMouseDown}
-        onDayMouseEnter={handleDayMouseEnter}
-        onDayMouseUp={handleDayMouseUp}
-      />
+          {/* Navigation */}
+          <div className="calendar-nav">
+            <button className="calendar-nav-arrow" onClick={goToPrevMonth}>←</button>
+            <h2 className="calendar-title">{MONTH_NAMES[month]} {year}</h2>
+            <button className="calendar-nav-arrow" onClick={goToNextMonth}>→</button>
+            <button className="calendar-nav-today" onClick={goToToday}>Today</button>
+          </div>
 
-      {/* Selection info — placeholder for the detail panel (Step 6) */}
-      {selection && (
-        <div className="selection-info">
-          Selected: {selection.start} → {selection.end}
+          {/* Calendar grid */}
+          <CalendarGrid
+            year={year}
+            month={month}
+            occupancyMap={occupancyMap}
+            selection={selection}
+            onDayMouseDown={handleDayMouseDown}
+            onDayMouseEnter={handleDayMouseEnter}
+            onDayMouseUp={handleDayMouseUp}
+          />
+
+          {/* Heatmap legend */}
+          <div className="calendar-legend">
+            <span className="legend-label">Occupancy:</span>
+            {LEGEND.map(({ color, label }) => (
+              <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span className="legend-swatch" style={{ background: color }} />
+                <span>{label}</span>
+              </span>
+            ))}
+            <span style={{ marginLeft: 4 }}>rooms</span>
+          </div>
+
+          {/* Booking detail panel */}
+          <BookingPanel
+            bookings={selectedBookings}
+            selection={selection}
+          />
+
         </div>
-      )}
+      </div>
+    </>
+  )
+}
+
+function TopBar() {
+  return (
+    <div className="app-topbar">
+      <div className="app-topbar-brand">
+        <div className="app-topbar-brand-dot" />
+        Guestara
+      </div>
+      <span className="app-topbar-sub">Occupancy Calendar</span>
     </div>
   )
 }

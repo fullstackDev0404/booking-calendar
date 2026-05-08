@@ -1,6 +1,9 @@
 // src/components/CalendarCell.jsx
 import { occupancyToColor } from '../utils/occupancyUtils'
 
+// Cells with these colors are dark — badge needs light styling
+const DARK_COLORS = new Set(['#fb923c', '#ef4444', '#991b1b'])
+
 /**
  * A single day cell in the calendar grid.
  *
@@ -20,14 +23,14 @@ export default function CalendarCell({
   onMouseEnter,
   onMouseUp,
 }) {
-  // When selected, CSS class handles the highlight color.
-  // Otherwise, inline style applies the heatmap color.
-  const bgColor = isSelected ? undefined : occupancyToColor(occupancy)
+  const bgColor  = isSelected ? undefined : occupancyToColor(occupancy)
+  const isDark   = DARK_COLORS.has(bgColor)
 
   const classes = [
     'calendar-cell',
     !cell.isCurrentMonth && 'calendar-cell--outside',
-    isSelected          && 'calendar-cell--selected',
+    isSelected           && 'calendar-cell--selected',
+    isDark               && 'calendar-cell--dark',
   ]
     .filter(Boolean)
     .join(' ')
