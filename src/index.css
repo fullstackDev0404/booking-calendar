@@ -109,3 +109,130 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ── App layout ─────────────────────────────────────────── */
+.app {
+  padding: 24px;
+  user-select: none; /* prevents text selection during drag */
+}
+
+.app-status {
+  padding: 48px;
+  text-align: center;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.app-status--error {
+  color: #ef4444;
+}
+
+/* ── Calendar navigation ─────────────────────────────────── */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.calendar-nav button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.calendar-nav button:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.calendar-title {
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+}
+
+.today-btn {
+  margin-left: 8px;
+}
+
+/* ── Calendar grid ───────────────────────────────────────── */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Header cells (Sun–Sat) ──────────────────────────────── */
+.calendar-header-cell {
+  background: var(--code-bg);
+  padding: 8px 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Day cells ───────────────────────────────────────────── */
+.calendar-cell {
+  background: var(--bg);
+  min-height: 72px;
+  padding: 6px 8px;
+  cursor: pointer;
+  position: relative;
+  transition: filter 0.1s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-cell:hover {
+  filter: brightness(0.95);
+}
+
+/* Days from previous/next month — dimmed */
+.calendar-cell--outside {
+  opacity: 0.35;
+}
+
+/* Selected range highlight */
+.calendar-cell--selected {
+  background: var(--accent-bg) !important;
+  outline: 2px solid var(--accent-border);
+  outline-offset: -2px;
+}
+
+.day-number {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-h);
+  line-height: 1;
+}
+
+.occupancy-count {
+  font-size: 11px;
+  color: var(--text);
+  margin-top: auto;
+}
+
+/* ── Selection info strip ────────────────────────────────── */
+.selection-info {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-h);
+  text-align: left;
+}
