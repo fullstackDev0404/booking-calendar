@@ -27,15 +27,14 @@ export default function App() {
 
   const { filters, setFilter, resetFilters, isFiltered } = useFilters()
 
-  // Unique filter options derived from the full dataset — computed once
+  // filter options come from the actual data so new room types appear automatically
   const filterOptions = useMemo(() => ({
     roomTypes: [...new Set(bookings.map(b => b.roomType))].sort(),
     statuses:  [...new Set(bookings.map(b => b.status))].sort(),
     sources:   [...new Set(bookings.map(b => b.source))].sort(),
   }), [bookings])
 
-  // Apply active filters to the bookings array.
-  // This is the single filtered source — everything downstream uses this.
+  // single filtered source — occupancy map, stats, panel and tooltip all derive from this
   const filteredBookings = useMemo(() => {
     return bookings.filter(b => {
       if (filters.roomType !== 'all' && b.roomType !== filters.roomType) return false
@@ -45,9 +44,7 @@ export default function App() {
     })
   }, [bookings, filters])
 
-  // Build the occupancy map over the full grid range — including the padding
-  // days from the previous and next month that appear in the calendar.
-  // This ensures outside-month cells show correct heatmap colors, not 0.
+  // cover the full grid range so outside-month padding cells get real colors too
   const occupancyMap = useMemo(() => {
     if (!filteredBookings.length) return {}
     const cells = buildCalendarCells(year, month)

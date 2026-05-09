@@ -1,16 +1,6 @@
 import { FILTER_LABELS } from '../constants'
 
-/**
- * Renders filter dropdowns for room type, status, and source.
- * Purely presentational — all state lives in useFilters (App.jsx).
- *
- * Props:
- *   filters      { roomType, status, source }
- *   setFilter    fn(key, value)
- *   resetFilters fn()
- *   isFiltered   boolean
- *   options      { roomTypes, statuses, sources } — derived from bookings data
- */
+// purely presentational — all state lives in useFilters
 export default function FilterBar({ filters, setFilter, resetFilters, isFiltered, options }) {
   return (
     <div className="filter-bar">
