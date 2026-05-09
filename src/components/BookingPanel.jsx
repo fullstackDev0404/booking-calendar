@@ -2,7 +2,7 @@ import { MONTH_SHORT } from '../constants'
 import { minDate, maxDate } from '../utils/dateUtils'
 import BookingCard from './BookingCard'
 
-// "Feb 5, 2026" format for the panel header — different from dateUtils.formatDate which gives "YYYY-MM-DD"
+// "Feb 5, 2026" format for the panel header
 function formatDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number)
   return `${MONTH_SHORT[m - 1]} ${d}, ${y}`
