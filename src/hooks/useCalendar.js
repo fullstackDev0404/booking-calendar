@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react'
-import { formatDate } from '../utils/dateUtils'
+import { useLocalStorage } from './useLocalStorage'
 
-// Captured once at module load — stable reference, never recreated on re-render.
 const TODAY = new Date()
 
 export function useCalendar() {
-  const [year, setYear]             = useState(TODAY.getFullYear())
-  const [month, setMonth]           = useState(TODAY.getMonth())
+  // persist month/year so the user comes back to the same view on reload
+  const [year, setYear]   = useLocalStorage('calendar-year',  TODAY.getFullYear())
+  const [month, setMonth] = useLocalStorage('calendar-month', TODAY.getMonth())
   const [selection, setSelection]   = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [tooltip, setTooltip]       = useState(null)
 
-  // If the user releases the mouse outside the grid, end the drag cleanly.
-  // Without this, isDragging stays true and the next hover continues the selection.
+  // end drag if mouse is released outside the grid
   useEffect(() => {
-    function onWindowMouseUp() {
-      setIsDragging(false)
-    }
-    window.addEventListener('mouseup', onWindowMouseUp)
-    return () => window.removeEventListener('mouseup', onWindowMouseUp)
+    function onMouseUp() { setIsDragging(false) }
+    window.addEventListener('mouseup', onMouseUp)
+    return () => window.removeEventListener('mouseup', onMouseUp)
   }, [])
 
   function goToPrevMonth() {

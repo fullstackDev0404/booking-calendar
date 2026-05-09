@@ -2,6 +2,9 @@
 
 ## Open Scope Features
 
+### Persistence (Month + Filters)
+The last-viewed month and active filters are saved to `localStorage` and restored on reload. It's a small `useLocalStorage` hook — a drop-in for `useState` that reads on mount and writes on every update. I went with `localStorage` over `sessionStorage` because a front desk user comes back to the same month every morning; losing the view on tab close would just be annoying. The hook falls back to defaults silently if storage is unavailable (private browsing, quota exceeded).
+
 ### Stats Strip
 I chose the stats strip because it's the most genuinely useful addition for a front desk tool. The calendar shows *where* occupancy is high — the stats strip answers *how bad is this month overall*. Total revenue, average occupancy, and top room type are the three numbers a hotel manager actually looks at every morning. It integrates above the calendar and updates automatically when you navigate months, so it never feels like a separate feature.
 
