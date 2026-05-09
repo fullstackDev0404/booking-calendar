@@ -2,6 +2,13 @@ import { MONTH_SHORT } from '../constants'
 import { minDate, maxDate } from '../utils/dateUtils'
 import BookingCard from './BookingCard'
 
+// Formats "YYYY-MM-DD" → "Feb 5, 2026" for display in the panel header.
+// Intentionally separate from dateUtils.formatDate which returns "YYYY-MM-DD".
+function formatDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return `${MONTH_SHORT[m - 1]} ${d}, ${y}`
+}
+
 export default function BookingPanel({ bookings, selection }) {
   if (!selection) return null
 
@@ -31,9 +38,4 @@ export default function BookingPanel({ bookings, selection }) {
       )}
     </div>
   )
-}
-
-function formatDate(dateStr) {
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return `${MONTH_SHORT[m - 1]} ${d}, ${y}`
 }
