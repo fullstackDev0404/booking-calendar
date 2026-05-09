@@ -27,7 +27,7 @@ Filters let the front desk focus on a specific segment — for example, filterin
 
 ## Trade-offs
 
-**Occupancy map scope**: The occupancy map is built only for the current month's date range. This means navigating months triggers a recompute. An alternative would be to precompute the entire dataset upfront into one big map. I chose per-month because it's simpler to reason about and the dataset is small enough that the recompute is instant.
+**Occupancy map scope**: The occupancy map is built over the full grid range — including the padding days from the previous and next month that appear in the calendar. This means outside-month cells show correct heatmap colors rather than always rendering as empty. The map recomputes when the month changes, which is instant for a dataset of this size.
 
 **Stats include cross-month bookings**: A booking that spans Jan 28 – Feb 5 is counted in both January and February stats. This is intentional — the booking is genuinely active in both months. The revenue attribution is less precise as a result (the full amount is counted in both months), but for a front desk tool that's an acceptable simplification.
 

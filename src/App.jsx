@@ -4,7 +4,7 @@ import { useCalendar } from './hooks/useCalendar'
 import { useFilters } from './hooks/useFilters'
 import { buildOccupancyMap } from './utils/occupancyUtils'
 import { computeMonthStats } from './utils/statsUtils'
-import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate, formatDate } from './utils/dateUtils'
+import { buildCalendarCells, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate, formatDate } from './utils/dateUtils'
 import { MONTH_NAMES, OCCUPANCY_LEGEND } from './constants'
 import CalendarGrid from './components/CalendarGrid'
 import BookingPanel from './components/BookingPanel'
@@ -45,12 +45,15 @@ export default function App() {
     })
   }, [bookings, filters])
 
-  // All derived data uses filteredBookings — heatmap and stats update with filters
+  // Build the occupancy map over the full grid range — including the padding
+  // days from the previous and next month that appear in the calendar.
+  // This ensures outside-month cells show correct heatmap colors, not 0.
   const occupancyMap = useMemo(() => {
     if (!filteredBookings.length) return {}
-    const m       = String(month + 1).padStart(2, '0')
-    const lastDay = String(getDaysInMonth(year, month)).padStart(2, '0')
-    return buildOccupancyMap(filteredBookings, `${year}-${m}-01`, `${year}-${m}-${lastDay}`)
+    const cells = buildCalendarCells(year, month)
+    const gridStart = cells[0].dateStr
+    const gridEnd   = cells[cells.length - 1].dateStr
+    return buildOccupancyMap(filteredBookings, gridStart, gridEnd)
   }, [filteredBookings, year, month])
 
   const monthStats = useMemo(() => {

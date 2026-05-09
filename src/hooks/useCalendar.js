@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { formatDate } from '../utils/dateUtils'
+
+// Captured once at module load — stable reference, never recreated on re-render.
+const TODAY = new Date()
 
 export function useCalendar() {
-  const today = new Date()
-
-  const [year, setYear]             = useState(today.getFullYear())
-  const [month, setMonth]           = useState(today.getMonth())
+  const [year, setYear]             = useState(TODAY.getFullYear())
+  const [month, setMonth]           = useState(TODAY.getMonth())
   const [selection, setSelection]   = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [tooltip, setTooltip]       = useState(null)
@@ -30,8 +32,8 @@ export function useCalendar() {
   }
 
   function goToToday() {
-    setYear(today.getFullYear())
-    setMonth(today.getMonth())
+    setYear(TODAY.getFullYear())
+    setMonth(TODAY.getMonth())
   }
 
   function handleDayMouseDown(dateStr) {

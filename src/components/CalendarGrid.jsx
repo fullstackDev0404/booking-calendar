@@ -1,4 +1,4 @@
-import { buildCalendarCells, minDate, maxDate, formatDate } from '../utils/dateUtils'
+import { buildCalendarCells, minDate, maxDate } from '../utils/dateUtils'
 import CalendarHeader from './CalendarHeader'
 import CalendarCell from './CalendarCell'
 

@@ -1,4 +1,5 @@
 import { bookingOccupiesDate, parseLocalDate, formatDate } from './dateUtils'
+import { TOTAL_ROOMS } from '../constants'
 
 export function buildOccupancyMap(bookings, startDate, endDate) {
   const map = {}
@@ -14,7 +15,7 @@ export function buildOccupancyMap(bookings, startDate, endDate) {
   return map
 }
 
-export function occupancyToColor(count, total = 10) {
+export function occupancyToColor(count, total = TOTAL_ROOMS) {
   if (count === 0) return '#f8fafc'
   const ratio = count / total
   if (ratio <= 0.3) return '#fef9c3'
