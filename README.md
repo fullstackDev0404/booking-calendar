@@ -1,16 +1,55 @@
-# React + Vite
+# Booking Calendar Heatmap
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page React app that visualizes hotel bookings as an interactive occupancy heatmap calendar. Built for the Guestara frontend intern assignment.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + Vite
+- Plain CSS (no UI libraries)
+- No calendar libraries — all date logic is hand-written
+- No date manipulation libraries — native `Date` object only
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Project Structure
+
+```
+src/
+  constants.js          # shared display data (month names, legend, etc.)
+  App.jsx               # orchestrator — wires hooks and components
+  hooks/
+    useBookings.js      # fetches bookings.json, manages loading/error state
+    useCalendar.js      # month navigation, drag selection, tooltip state
+  utils/
+    dateUtils.js        # pure date functions (parse, format, occupancy logic)
+    occupancyUtils.js   # builds occupancy map, color scale
+    statsUtils.js       # computes month-level metrics
+  components/
+    CalendarGrid.jsx    # assembles the 7-column grid
+    CalendarHeader.jsx  # weekday labels row
+    CalendarCell.jsx    # single day cell
+    BookingPanel.jsx    # detail panel for selected range
+    BookingCard.jsx     # single booking row
+    StatsStrip.jsx      # month metrics header
+    DayTooltip.jsx      # hover tooltip
+```
+
+## Features
+
+**Core**
+- Month-view calendar with occupancy heatmap (white → yellow → orange → red)
+- Prev/next month navigation + Today button
+- Drag-to-select date range (forward and backward, cross-month)
+- Booking detail panel showing all bookings overlapping the selected range
+- Data loaded via `fetch` from `/public/bookings.json` with loading and error states
+
+**Open Scope**
+- Stats strip: total revenue, avg occupancy, total bookings, longest stay, top room type — updates per month
+- Hover tooltip: quick summary of occupancy and guests on any day cell
