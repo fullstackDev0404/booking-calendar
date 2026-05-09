@@ -562,3 +562,73 @@ body {
   text-align: center;
   padding-top: 2px;
 }
+
+/* ── Filter bar ──────────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-right: 4px;
+}
+
+.filter-select {
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239e9890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+
+.filter-select:hover {
+  border-color: var(--border-dark);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
+}
+
+/* Active filter — gold border to signal something is selected */
+.filter-select:not([value='all']) {
+  border-color: var(--gold);
+  color: var(--navy);
+  font-weight: 500;
+}
+
+.filter-clear {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-left: 4px;
+}
+
+.filter-clear:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}

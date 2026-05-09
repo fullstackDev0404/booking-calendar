@@ -21,3 +21,12 @@ export const OCCUPANCY_LEGEND = [
 ]
 
 export const TOTAL_ROOMS = 10
+
+export const FILTER_LABELS = {
+  status: {
+    confirmed:   'Confirmed',
+    checked_in:  'Checked In',
+    checked_out: 'Checked Out',
+    cancelled:   'Cancelled',
+  },
+}

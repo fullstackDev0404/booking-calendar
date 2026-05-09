@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useBookings } from './hooks/useBookings'
 import { useCalendar } from './hooks/useCalendar'
+import { useFilters } from './hooks/useFilters'
 import { buildOccupancyMap } from './utils/occupancyUtils'
 import { computeMonthStats } from './utils/statsUtils'
 import { getDaysInMonth, minDate, maxDate, bookingOverlapsRange, bookingOccupiesDate, formatDate } from './utils/dateUtils'
@@ -9,6 +10,7 @@ import CalendarGrid from './components/CalendarGrid'
 import BookingPanel from './components/BookingPanel'
 import StatsStrip from './components/StatsStrip'
 import DayTooltip from './components/DayTooltip'
+import FilterBar from './components/FilterBar'
 
 export default function App() {
   const { bookings, loading, error } = useBookings()
@@ -23,30 +25,51 @@ export default function App() {
     handleDayMouseMove, handleDayMouseLeave,
   } = useCalendar()
 
+  const { filters, setFilter, resetFilters, isFiltered } = useFilters()
+
+  // Unique filter options derived from the full dataset — computed once
+  const filterOptions = useMemo(() => ({
+    roomTypes: [...new Set(bookings.map(b => b.roomType))].sort(),
+    statuses:  [...new Set(bookings.map(b => b.status))].sort(),
+    sources:   [...new Set(bookings.map(b => b.source))].sort(),
+  }), [bookings])
+
+  // Apply active filters to the bookings array.
+  // This is the single filtered source — everything downstream uses this.
+  const filteredBookings = useMemo(() => {
+    return bookings.filter(b => {
+      if (filters.roomType !== 'all' && b.roomType !== filters.roomType) return false
+      if (filters.status   !== 'all' && b.status   !== filters.status)   return false
+      if (filters.source   !== 'all' && b.source   !== filters.source)   return false
+      return true
+    })
+  }, [bookings, filters])
+
+  // All derived data uses filteredBookings — heatmap and stats update with filters
   const occupancyMap = useMemo(() => {
-    if (!bookings.length) return {}
+    if (!filteredBookings.length) return {}
     const m       = String(month + 1).padStart(2, '0')
     const lastDay = String(getDaysInMonth(year, month)).padStart(2, '0')
-    return buildOccupancyMap(bookings, `${year}-${m}-01`, `${year}-${m}-${lastDay}`)
-  }, [bookings, year, month])
+    return buildOccupancyMap(filteredBookings, `${year}-${m}-01`, `${year}-${m}-${lastDay}`)
+  }, [filteredBookings, year, month])
 
   const monthStats = useMemo(() => {
-    if (!bookings.length) return null
-    return computeMonthStats(bookings, year, month)
-  }, [bookings, year, month])
+    if (!filteredBookings.length) return null
+    return computeMonthStats(filteredBookings, year, month)
+  }, [filteredBookings, year, month])
 
   const selectedBookings = useMemo(() => {
     if (!selection) return []
     const start = minDate(selection.start, selection.end)
     const end   = maxDate(selection.start, selection.end)
-    return bookings.filter(b => bookingOverlapsRange(b, start, end))
-  }, [bookings, selection])
+    return filteredBookings.filter(b => bookingOverlapsRange(b, start, end))
+  }, [filteredBookings, selection])
 
   const hoveredDateStr  = tooltip?.dateStr ?? null
   const tooltipBookings = useMemo(() => {
     if (!hoveredDateStr) return []
-    return bookings.filter(b => bookingOccupiesDate(b, hoveredDateStr))
-  }, [bookings, hoveredDateStr])
+    return filteredBookings.filter(b => bookingOccupiesDate(b, hoveredDateStr))
+  }, [filteredBookings, hoveredDateStr])
 
   if (loading) {
     return (
@@ -78,6 +101,14 @@ export default function App() {
         <div className="calendar-section">
 
           <StatsStrip stats={monthStats} />
+
+          <FilterBar
+            filters={filters}
+            setFilter={setFilter}
+            resetFilters={resetFilters}
+            isFiltered={isFiltered}
+            options={filterOptions}
+          />
 
           <div className="calendar-nav">
             <button className="calendar-nav-arrow" onClick={goToPrevMonth}>←</button>
