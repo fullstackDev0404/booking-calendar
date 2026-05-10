@@ -1,7 +1,8 @@
 import { FILTER_LABELS } from '../constants'
+import ExportButton from './ExportButton'
 
 // purely presentational — all state lives in useFilters
-export default function FilterBar({ filters, setFilter, resetFilters, isFiltered, options }) {
+export default function FilterBar({ filters, setFilter, resetFilters, isFiltered, options, filteredBookings }) {
   return (
     <div className="filter-bar">
       <span className="filter-bar-label">Filter:</span>
@@ -33,6 +34,8 @@ export default function FilterBar({ filters, setFilter, resetFilters, isFiltered
           Clear filters
         </button>
       )}
+
+      <ExportButton bookings={filteredBookings} filters={filters} />
     </div>
   )
 }

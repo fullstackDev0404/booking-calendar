@@ -108,6 +108,7 @@ export default function App() {
             resetFilters={resetFilters}
             isFiltered={isFiltered}
             options={filterOptions}
+            filteredBookings={filteredBookings}
           />
 
           <div className="calendar-nav">

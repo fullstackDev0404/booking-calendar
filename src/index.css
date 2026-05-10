@@ -632,3 +632,40 @@ body {
   border-color: #fca5a5;
   color: #991b1b;
 }
+
+/* ── Export button ───────────────────────────────────────── */
+.export-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.export-btn--success {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.export-btn--error {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
